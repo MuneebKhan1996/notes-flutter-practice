@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "942542689277",
+    "project_id": "nottes-muneeb",
+    "storage_bucket": "nottes-muneeb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942542689277:android:c41114696938326aff7f94",
+        "android_client_info": {
+          "package_name": "com.example.my_notes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "942542689277-bpirstt3vtci0ukequo82nb6ou5n75jr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEEWixua9suWCmG8MeGsRMIi8QpULPc8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "942542689277-bpirstt3vtci0ukequo82nb6ou5n75jr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
