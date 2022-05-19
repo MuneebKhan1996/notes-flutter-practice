@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_notes/constants/routes.dart';
+import '../utilities/show_error_dialogue.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -36,26 +37,21 @@ class _RegisterViewState extends State<RegisterView> {
     try {
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      final user = FirebaseAuth.instance.currentUser;
+      await user?.sendEmailVerification();
+      Navigator.of(context).pushNamed(verifyEmailRoute);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        Fluttertoast.showToast(
-            msg: e.code, // message
-            toastLength: Toast.LENGTH_SHORT, // length
-            gravity: ToastGravity.CENTER, // location
-            timeInSecForIosWeb: 2 // duration
-            );
+        await showErrorDialogue(context, 'Weak Password');
       } else if (e.code == 'email-already-in-use') {
-        Fluttertoast.showToast(
-            msg: e.code, // message
-            toastLength: Toast.LENGTH_SHORT, // length
-            gravity: ToastGravity.CENTER, // location
-            timeInSecForIosWeb: 2 // duration
-            );
+        await showErrorDialogue(context, 'Email Already in use');
       } else if (e.code == 'invalid-email') {
-        print(e.code);
+        await showErrorDialogue(context, 'Invalid Email');
       } else {
-        print(e.code);
+        await showErrorDialogue(context, 'Error ${e.code}');
       }
+    } catch (e) {
+      await showErrorDialogue(context, e.toString());
     }
   }
 
@@ -85,7 +81,7 @@ class _RegisterViewState extends State<RegisterView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
               },
               child: const Text('Login'))
         ],

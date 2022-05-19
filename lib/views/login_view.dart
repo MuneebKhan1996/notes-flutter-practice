@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_notes/constants/routes.dart';
+import '../utilities/show_error_dialogue.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -36,33 +37,32 @@ class _LoginViewState extends State<LoginView> {
     try {
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        Fluttertoast.showToast(
-            msg: e.code, // message
-            toastLength: Toast.LENGTH_SHORT, // length
-            gravity: ToastGravity.CENTER, // location
-            timeInSecForIosWeb: 2 // duration
-            );
-      } else if (e.code == 'wrong-password') {
-        Fluttertoast.showToast(
-            msg: e.code, // message
-            toastLength: Toast.LENGTH_SHORT, // length
-            gravity: ToastGravity.CENTER, // location
-            timeInSecForIosWeb: 2 // duration
-            );
+      final user = FirebaseAuth.instance.currentUser;
+      if(user?.emailVerified ?? false){
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+      } else {
+        Navigator.of(context).pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false);
       }
 
-      print(e.code);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        await showErrorDialogue(context, 'User Not Found');
+      } else if (e.code == 'wrong-password') {
+        await showErrorDialogue(context, 'Wrong Password Entered');
+      }
+      await showErrorDialogue(context, 'Error ${e.code}');
+    } catch (e) {
+      await showErrorDialogue(context, e.toString());
     }
-
-    // print(userCredential);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login View'),),
+      appBar: AppBar(
+        title: const Text('Login View'),
+      ),
       body: Column(
         children: [
           TextField(
@@ -83,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+                    .pushNamedAndRemoveUntil(registerRoute, (route) => false);
               },
               child: const Text('Sign Up'))
         ],
